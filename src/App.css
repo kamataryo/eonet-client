@@ -20,3 +20,28 @@
 .App-link {
   color: #09d3ac;
 }
+
+.horizontal-slider{
+  background-color: #ffff;
+  height: 1px;
+  margin-top: 20px;
+}
+
+.example-thumb-0{
+  transform-origin: center center;
+  display: block;
+  width: 30px;
+  height: 30px;
+  background: rgb(0, 0, 0);
+  border-radius: 50%;
+  text-align: center;
+  padding-top: 3px;
+  box-sizing: border-box;
+  border: 2px solid rgb(255, 255, 255);
+  margin-top: -13px;
+  color: rgb(255, 255, 255);
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 15px;
+}
