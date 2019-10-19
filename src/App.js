@@ -3,6 +3,7 @@ import { StaticMap } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import getStyle from "./api/style";
+import { getEvents } from "./api";
 import ReactSlider from "react-slider";
 
 // Viewport settings
@@ -32,7 +33,14 @@ export class App extends React.Component {
 
   componentWillUpdate(nextProps, nextState) {
     if (nextState.past !== this.state.past) {
-      console.log("fetch here");
+      getEvents(8, 36)
+        .then(({ events }) => {
+          const points = events
+            .flatMap(event => event.geometries)
+            .map(e => e.coordinates);
+          console.log(points);
+        })
+        .catch(err => console.error(err));
     }
   }
 
