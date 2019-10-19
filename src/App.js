@@ -3,7 +3,7 @@ import { StaticMap } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import getStyle from "./api/style";
-import { getEvents } from "./api";
+import { getEvents,getCategories }  from './api';
 import ReactSlider from "react-slider";
 
 // Viewport settings
@@ -22,12 +22,13 @@ export class App extends React.Component {
       style: false,
       layer: false,
       past: 0,
-      event: "aaa"
+      categories: []
     };
   }
 
   componentDidMount() {
     getStyle().then(style => this.setState({ style }));
+    getCategories().then(categories => this.setState({ categories }));
     this.setState({ layer: new HeatmapLayer({}) });
   }
 

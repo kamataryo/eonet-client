@@ -4,7 +4,6 @@ import './index.css';
 import './App.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { getEvents }  from './api/index';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
