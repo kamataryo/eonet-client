@@ -98,7 +98,9 @@ export class App extends React.Component {
           thumbClassName="example-thumb"
           trackClassName="example-track"
           renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
-          onChange={past => this.setState({ past })}
+          onAfterChange={past => this.setState({ past })}
+          min={1}
+          max={365}
         />
         <Select
           value={selectedCategory}
