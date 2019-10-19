@@ -33,19 +33,27 @@ export class App extends React.Component {
 
   componentWillUpdate(nextProps, nextState) {
     if (nextState.past !== this.state.past) {
-      getEvents(8, 36)
+      getEvents(8, nextState.past)
         .then(({ events }) => {
-          const points = events
+          const data = events
             .flatMap(event => event.geometries)
             .map(e => e.coordinates);
-          console.log(points);
+          console.log(data);
+          this.setState({
+            layer: new HeatmapLayer({
+              data,
+              getPosition: d => d,
+              getWeight: d => 10
+            })
+          });
         })
-        .catch(err => console.error(err));
+        .catch(err => {});
     }
   }
 
   render() {
     const { style, layer } = this.state;
+
     return (
       <div className="App">
         {layer && (
