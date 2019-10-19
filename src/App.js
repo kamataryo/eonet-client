@@ -3,9 +3,10 @@ import { StaticMap } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import getStyle from "./api/style";
-import { getEvents,getCategories }  from './api';
+import { getEvents, getCategories } from "./api";
 import ReactSlider from "react-slider";
-import Select from 'react-select';
+import Select from "react-select";
+import colors from "./colors";
 
 // Viewport settings
 const viewState = {
@@ -24,23 +25,31 @@ export class App extends React.Component {
       layer: false,
       past: 0,
       categories: [],
-      selectedCategory: null,
+      selectedCategory: null
     };
   }
 
   componentDidMount() {
     getStyle().then(style => this.setState({ style }));
-    getCategories().then(categories => categories.categories.map(obj =>{
+    getCategories()
+      .then(categories =>
+        categories.categories.map(obj => {
           let categories = {};
           categories.value = obj.id;
           categories.label = obj.title;
           return categories;
-       })).then(categories => this.setState({ categories }));
+        })
+      )
+      .then(categories => this.setState({ categories }));
     this.setState({ layer: new HeatmapLayer({}) });
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if ((nextState.past !== this.state.past || nextState.selectedCategory !== this.state.selectedCategory) && nextState.selectedCategory !== null) {
+    if (
+      (nextState.past !== this.state.past ||
+        nextState.selectedCategory !== this.state.selectedCategory) &&
+      nextState.selectedCategory !== null
+    ) {
       getEvents(nextState.selectedCategory.value, nextState.past)
         .then(({ events }) => {
           const data = events
@@ -50,6 +59,8 @@ export class App extends React.Component {
           this.setState({
             layer: new HeatmapLayer({
               data,
+              colorRange:
+                colors[nextState.selectedCategory.value] || colors["default"],
               getPosition: d => d,
               getWeight: d => 10
             })
@@ -60,9 +71,7 @@ export class App extends React.Component {
   }
 
   handleChange = option => {
-    this.setState(
-      { selectedCategory : option }
-    );
+    this.setState({ selectedCategory: option });
   };
 
   render() {
@@ -92,9 +101,9 @@ export class App extends React.Component {
           onChange={past => this.setState({ past })}
         />
         <Select
-        value={selectedCategory}
-        onChange={this.handleChange}
-        options={categories}
+          value={selectedCategory}
+          onChange={this.handleChange}
+          options={categories}
         />
       </div>
     );
