@@ -5,6 +5,7 @@ import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import getStyle from "./api/style";
 import { getEvents,getCategories }  from './api';
 import ReactSlider from "react-slider";
+import Select from 'react-select';
 
 // Viewport settings
 const viewState = {
@@ -22,19 +23,25 @@ export class App extends React.Component {
       style: false,
       layer: false,
       past: 0,
-      categories: []
+      categories: [],
+      selectedCategory: null,
     };
   }
 
   componentDidMount() {
     getStyle().then(style => this.setState({ style }));
-    getCategories().then(categories => this.setState({ categories }));
+    getCategories().then(categories => categories.categories.map(obj =>{
+          let categories = {};
+          categories.value = obj.id;
+          categories.label = obj.title;
+          return categories;
+       })).then(categories => this.setState({ categories }));
     this.setState({ layer: new HeatmapLayer({}) });
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if (nextState.past !== this.state.past) {
-      getEvents(8, nextState.past)
+    if ((nextState.past !== this.state.past || nextState.selectedCategory !== this.state.selectedCategory) && nextState.selectedCategory !== null) {
+      getEvents(nextState.selectedCategory.value, nextState.past)
         .then(({ events }) => {
           const data = events
             .flatMap(event => event.geometries)
@@ -52,8 +59,14 @@ export class App extends React.Component {
     }
   }
 
+  handleChange = option => {
+    this.setState(
+      { selectedCategory : option }
+    );
+  };
+
   render() {
-    const { style, layer } = this.state;
+    const { style, layer, categories, selectedCategory } = this.state;
 
     return (
       <div className="App">
@@ -77,6 +90,11 @@ export class App extends React.Component {
           trackClassName="example-track"
           renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
           onChange={past => this.setState({ past })}
+        />
+        <Select
+        value={selectedCategory}
+        onChange={this.handleChange}
+        options={categories}
         />
       </div>
     );
